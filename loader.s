@@ -13,7 +13,7 @@
 .global loader
 
 loader: 
-    mov $kernal_stack, %esp
+    mov $kernel_stack, %esp
     push %eax
     push %ebx
     call kernelMain
