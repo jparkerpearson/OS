@@ -14,10 +14,13 @@
 .global loader
 
 loader: 
+    ; Stack pointer is not set initially
+    ; this is a problem because c++ programs expect
+    ; that the stack pointer is already set.
     mov $kernel_stack, %esp
 
     call callConstructors
-    
+
     push %eax
     push %ebx
     call kernelMain
