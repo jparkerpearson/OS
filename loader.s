@@ -26,11 +26,18 @@ loader:
     call kernelMain
 
 _stop:
+    ; cli clears the interupt flag so the program wont be interupted
     cli
+    ; hlt halts the cpu until an interupt is recieved
     hlt
     jmp _stop
 
 
 .section .bss
+; This sets 2 MiB of space before setting the kerenl stack pointer
+; The kernel stack grows down so this just gives space for the kernel
+; stack.
 .space 2*1024*1024; # 2 MiB
+; This label is basicaly a pointer to the memory location after all the space
+; which is basically then start of the stack (which grows into the space).
 kernel_stack:
