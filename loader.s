@@ -14,28 +14,28 @@
 .global loader
 
 loader: 
-    ; Stack pointer is not set initially
-    ; this is a problem because c++ programs expect
-    ; that the stack pointer is already set.
+    # ; Stack pointer is not set initially
+    # ; this is a problem because c++ programs expect
+    # ; that the stack pointer is already set.
     mov $kernel_stack, %esp
 
 
-    ; We might need to initialize some constructors in the begining
-    ; im not totally sure why yet.
+    # ; We might need to initialize some constructors in the begining
+    # ; im not totally sure why yet.
     call callConstructors
 
-    ; I this this is just a calling a function convention
-    ; where the contents of the registers are saved to the stack 
-    ; before calling the function. I am not really sure though,
-    ; and I don't think theres anything in those regsiters we need.
+    # ; I this this is just a calling a function convention
+    # ; where the contents of the registers are saved to the stack 
+    # ; before calling the function. I am not really sure though,
+    # ; and I don't think theres anything in those regsiters we need.
     push %eax
     push %ebx
     call kernelMain
 
 _stop:
-    ; cli clears the interupt flag so the program wont be interupted
+    # ; cli clears the interupt flag so the program wont be interupted
     cli
-    ; hlt halts the cpu until an interupt is recieved
+    # ; hlt halts the cpu until an interupt is recieved
     hlt
     jmp _stop
 
