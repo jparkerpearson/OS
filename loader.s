@@ -19,8 +19,15 @@ loader:
     ; that the stack pointer is already set.
     mov $kernel_stack, %esp
 
+
+    ; We might need to initialize some constructors in the begining
+    ; im not totally sure why yet.
     call callConstructors
 
+    ; I this this is just a calling a function convention
+    ; where the contents of the registers are saved to the stack 
+    ; before calling the function. I am not really sure though,
+    ; and I don't think theres anything in those regsiters we need.
     push %eax
     push %ebx
     call kernelMain
