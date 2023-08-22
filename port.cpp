@@ -48,7 +48,7 @@ void Port8BitSlow::Write(uint8_t data)
 {
 
     // Two garbage instructions to give more time for the processor to write to the port.
-    asm volatile("outb %0, %1\n 1f\n 1: jmp 1f\n 1:"
+    asm volatile("outb %0, %1\njmp 1f\n1: jmp 1f\n1:"
                  :
                  : "a"(data), "Nd"(portnumber));
 }
