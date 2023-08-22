@@ -15,8 +15,9 @@ void printf(char *str)
       switch (str[i])
       {
       case '\n':
-         x = 0;
          y++;
+
+         x = 0;
          break;
       default:
          // We can use a pointer as an array to access subsequent memomory.
@@ -63,7 +64,7 @@ extern "C" void callConstructors()
 extern "C" void kernelMain(void *multiboot_structure, uint32_t magicnumber)
 {
 
-   printf("Hello World! Welcome to my OS. \n");
+   printf("Hello World! Welcome to my OS.");
    printf("My name is Parker. \n");
    printf("This is the third line.");
 
