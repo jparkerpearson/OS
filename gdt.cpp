@@ -2,8 +2,15 @@
 #include "types.h"
 
 // Instructions are of the following format:
-//   Limit 0:16    |    Base 0:15   | Base 16:23 | Access 0:7 | Limit 16:19 | Flag 0:3 | Base 24:31
-// byte 0 | byte 1 | byte 2 | byte 3|   byte 4   |  byte 5    |          byte 6        | byte 7
+
+////
+//  Base 24:31  | Flags 0:3 | Limit 16:19 | Access / Type 0:7 |    Base 16:23
+//  Byte 7      | Byte 6                  |     Byte 5        |     Byte 4
+//          -----------------------------
+//    Base 0:15     |   Limit 0:15
+//  Byte 3 | Byte 2 | Byte 1 | Byte 0
+//////
+
 // The limit is the size of the segment, base is the start of the segment, access is the type of segment it is
 GlobalDescriptorTable::GlobalDescriptorTable()
     : nullSegmentSelector(0, 0, 0),
@@ -53,7 +60,9 @@ GlobalDescriptorTable::SegmentDescriptor::SegmentDescriptor(uint32_t base, uint3
 
     else
     {
-        // the last 12 bits are not all 1's
+        // We want to make sure the limit is in 4kb blocks. If the last 12 bits are all 1's, then we know its in 4kb blocks.
+        // We only have 20 bits of limit to store data in even though we are given a 32 bit number. Therefore we shift by 12 bits.
+        // If its not a 4kb block we shift by 12 and subtract 1.
         if (limit & 0xFFF != 0xFFF)
         {
             limit = (limit >> 12) - 1;
@@ -65,9 +74,6 @@ GlobalDescriptorTable::SegmentDescriptor::SegmentDescriptor(uint32_t base, uint3
 
         target[6] = 0xC0;
     }
-
-    //   Limit 0:16    |    Base 0:15   | Base 16:23 | Access 0:7 | Limit 16:19 | Flag 0:3 | Base 24:31
-    // byte 0 | byte 1 | byte 2 | byte 3|   byte 4   |  byte 5    |          byte 6        | byte 7
 
     target[0] = limit & 0xFF;
     target[1] = (limit >> 8) & 0xFF;
@@ -86,6 +92,7 @@ GlobalDescriptorTable::SegmentDescriptor::SegmentDescriptor(uint32_t base, uint3
     ////////
 }
 
+// Return the rebuilt base
 uint32_t GlobalDescriptorTable::SegmentDescriptor::Base()
 {
     uint8_t *target = (uint8_t *)this;
@@ -96,8 +103,7 @@ uint32_t GlobalDescriptorTable::SegmentDescriptor::Base()
     return result;
 }
 
-//   Limit 0:16    |    Base 0:15   | Base 16:23 | Access 0:7 | Limit 16:19 | Flag 0:3 | Base 24:31
-// byte 0 | byte 1 | byte 2 | byte 3|   byte 4   |  byte 5    |          byte 6        | byte 7
+//  Return the rebuilt limit
 uint32_t GlobalDescriptorTable::SegmentDescriptor::Limit()
 {
     uint8_t *target = (uint8_t *)this;
